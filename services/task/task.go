@@ -56,6 +56,16 @@ func handler(items ...*admin_model.Task) []*admin_model.Task {
 	return nil
 }
 
+// MigrateRepositoryApi add migration repository to task
+func MigrateRepositoryApi(ctx context.Context, doer, u *user_model.User, opts base.MigrateOptions) (*admin_model.Task, error) {
+	task, err := CreateMigrateTask(ctx, doer, u, opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, taskQueue.Push(task)
+}
+
 // MigrateRepository add migration repository to task
 func MigrateRepository(ctx context.Context, doer, u *user_model.User, opts base.MigrateOptions) error {
 	task, err := CreateMigrateTask(ctx, doer, u, opts)
